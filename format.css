@@ -1,0 +1,38 @@
+#gameCanvas {
+    position: absolute;
+    width: 800px;
+    height: 500px;
+    border: solid black 1px;
+    background: black;
+    top: 50%;
+    left: 50%;
+    margin-left: -250px;
+    margin-top: -250px;
+
+}
+
+.h1class {
+    position: relative;
+    color: white;
+    margin-left: 25%;
+}
+
+.mainpagebutton {
+    top: 50%;
+    left: 50%;
+    margin-left: 25%;
+}
+
+.emptyField {
+    border: solid white 1px;
+    background: gray;
+    position: absolute;
+    z-index: 0;
+}
+
+.fullField {
+    border: solid white 1px;
+    background: red;
+    position: absolute;
+    z-index: 0;
+}
