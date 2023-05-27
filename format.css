@@ -23,6 +23,13 @@
     margin-left: 25%;
 }
 
+.fullField {
+    border: solid white 1px;
+    background: red;
+    position: absolute;
+    z-index: 0;
+}
+
 .emptyField {
     border: solid white 1px;
     background: gray;
@@ -30,9 +37,4 @@
     z-index: 0;
 }
 
-.fullField {
-    border: solid white 1px;
-    background: red;
-    position: absolute;
-    z-index: 0;
-}
+
