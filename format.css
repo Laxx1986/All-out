@@ -5,7 +5,20 @@
     border: solid black 1px;
     background: black;
     top: 50%;
-    left: 50%;
+    left: 20%;
+    margin-left: -250px;
+    margin-top: -250px;
+
+}
+
+#extraCanvas {
+    position: absolute;
+    width: 300px;
+    height: 500px;
+    border: solid black 1px;
+    background: black;
+    top: 50%;
+    left: 80%;
     margin-left: -250px;
     margin-top: -250px;
 
@@ -35,6 +48,50 @@
     background: gray;
     position: absolute;
     z-index: 0;
+}
+
+#timerDisplay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: red;
+    font-size: 20px;
+    fontSize: 24px;
+    fontWeight: bold;
+    background: gray;
+}
+
+#stepCounter {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    color: red;
+    font-size: 20px;
+    fontSize: 24px;
+    fontWeight: bold;
+    background: gray;
+}
+
+#scoreCounter {
+    position: absolute;
+    top: 90px;
+    left: 10px;
+    color: red;
+    font-size: 20px;
+    fontSize: 24px;
+    fontWeight: bold;
+    background: gray;
+}
+
+#mainScoreCounter {
+    position: absolute;
+    top: 140px;
+    left: 10px;
+    color: red;
+    font-size: 20px;
+    fontSize: 24px;
+    fontWeight: bold;
+    background: gray;
 }
 
 
