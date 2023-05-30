@@ -1,23 +1,28 @@
 let N = 10;
 let blockSize = 500 / N;
 let level = 1;
-let levelFinished = false;
-let timeExpired = false;
 let score = 0;
-let images = [[]];
-let img = new Image();
 let allEmpty=true;
 let steps = 0;
-let countdown;
+let time = 0;
 let mainScore = 0;
+let countUp;
+let playername;
+let gameCanvas;
+let topList = [];
+let audio;
+let clickedField;
+let index;
+let row;
+let col;
 
 $(function () {
     gameCanvas = $('<div></div>');
     gameCanvas.appendTo('body');
+
     gameCanvas.attr('id', 'gameCanvas');
     gameCanvas.on('click', '.emptyField', clickOnField);
     gameCanvas.on('click', '.fullField', clickOnField);
-
 });
 
 $(function () {
@@ -27,23 +32,52 @@ $(function () {
 
 });
 
-
+document.addEventListener('DOMContentLoaded', function() {
+    let toplistContainer = document.createElement('div');
+    toplistContainer.setAttribute('id', 'toplistContainer');
+    document.body.appendChild(toplistContainer);
+});
 
 function openTopList() {
+    topList.sort(function(a, b) {
+        return b.points - a.points;
+    });
+    let tableContent = '<table><tr><th>Név</th><th>Pontszám</th></tr>';
+    for (let i = 0; i < topList.length; i++) {
+        tableContent += '<tr><td>' + topList[i].name + '</td><td>' + topList[i].points + '</td></tr>';
+    }
+    tableContent += '</table>';
+    document.getElementById('toplistContainer').innerHTML = tableContent;
     window.location.href = 'toplist.html';
 }
+
+$(function () {
+    $('#toplistButton').click(openTopList);
+});
 
 function openRules() {
     window.location.href = 'rules.html';
 }
 
-function startGame() {
-    alert("A(z) " + level + " palya elindult");
+function newGame() {
+    topList.push({name: playername, points: mainScore});
+    for (let i = 0; i<topList.length; i++) {
+        console.log(topList[i].name + " " + topList[i].points);
+    }
+    playername = prompt('Add meg a neved: ');
+    level = 1;
     levelStart = true;
+    score = 0;
+    steps=-1;
+    mainScore = 0;
     drawLevel();
+    timer();
 }
 
 function drawLevel() {
+    alert("A(z) " + level + " palya elindult");
+    gameCanvas.empty();
+    steps = -1;
     score = 0;
     let timerDisplay = $('<div></div>');
     timerDisplay.attr('id', 'timerDisplay');
@@ -61,29 +95,6 @@ function drawLevel() {
     mainSc.attr('id', 'mainScoreCounter');
     mainSc.appendTo(extraCanvas);
 
-    switch (level) {
-        case 1: {
-            timer(10);
-            steps = 0;
-            break;
-        }
-        case 2: {
-            timer(120);
-            steps = 0;
-            break;
-        }
-        case 3: {
-            timer(180);
-            steps = 0;
-            break;
-        }
-        case 4: {
-            timer(240);
-            steps = 0;
-            break;
-        }
-
-    }
     for(let i=0; i<N; i++) {
         for (let j=0; j<N; j++) {
 
@@ -99,29 +110,39 @@ function drawLevel() {
 
                     break; }
                 case 2: {
-
-                    if (Math.random() > 0.8) {
+                    if (i === 0 && j === 9 || i === 0 && j === 8 || i === 1 && j === 9) {
                         emptyField.removeClass('emptyField');
                         emptyField.addClass('fullField');
                     }
+
+                    // if (Math.random() > 0.8) {
+                    //     emptyField.removeClass('emptyField');
+                    //     emptyField.addClass('fullField');
+                    // }
 
                     break;
                 }
                 case 3: {
-
-                    if (Math.random() > 0.7) {
+                    if (i === 0 && j === 9 || i === 0 && j === 8 || i === 1 && j === 9) {
                         emptyField.removeClass('emptyField');
                         emptyField.addClass('fullField');
                     }
+                    // if (Math.random() > 0.7) {
+                    //     emptyField.removeClass('emptyField');
+                    //     emptyField.addClass('fullField');
+                    // }
 
                     break;
                 }
                 case 4: {
-
-                    if (Math.random() > 0.6) {
+                    if (i === 0 && j === 9 || i === 0 && j === 8 || i === 1 && j === 9) {
                         emptyField.removeClass('emptyField');
                         emptyField.addClass('fullField');
                     }
+                    // if (Math.random() > 0.6) {
+                    //     emptyField.removeClass('emptyField');
+                    //     emptyField.addClass('fullField');
+                    // }
 
                     break;
                 }
@@ -139,60 +160,50 @@ function drawLevel() {
         }
     }
     allEmpty = true;
+    stepCounter();
+    scoreCounter();
 }
 
-function nextLevel() {
-    if (levelFinished === false) {
-        alert("Előbb fejezd be az aktuális pályát");
-    } else {
-        drawLevel();
-    }
-
-}
-
-function clickOnField () {
-   if (timeExpired) {
-        return;
-    }
-    var audio = new Audio('click.wav'); // Hangfájl elérési útja
+function clickOnField() {
+    stepCounter();
+    scoreCounter();
+    audio = new Audio('click.wav');
     audio.play();
-    var clickedField = $(this);
-    var index = gameCanvas.children().index(clickedField);
-    var row = Math.floor(index / N); // sor indexe
-    var col = index % N; // oszlop indexe
-    console.log(row + " " + col);
+    clickedField = $(this);
+    console.log(clickedField);
+    index = gameCanvas.children().index(clickedField);
+    console.log(index);
+    row = Math.floor(index / N);
+    console.log(row);
+    col = index % N;
+    console.log(col);
 
+    var allEmpty = true; // AllEmpty változó helyesen inicializálva
 
     // Felül lévő mező
     if (row > 0) {
         var aboveIndex = (row - 1) * N + col;
         var aboveField = gameCanvas.children().eq(aboveIndex);
-        switch (true) {
-
-            case aboveField.hasClass('emptyField'):
-                aboveField.removeClass('emptyField');
-                aboveField.addClass('fullField');
-                break;
-            case aboveField.hasClass('fullField'):
-                aboveField.removeClass('fullField');
-                aboveField.addClass('emptyField');
-                break;
+        if (aboveField.hasClass('emptyField')) {
+            aboveField.removeClass('emptyField');
+            aboveField.addClass('fullField');
+        } else {
+            aboveField.removeClass('fullField');
+            aboveField.addClass('emptyField');
         }
     }
 
     // Alatta lévő mező
     if (row < N - 1) {
+        console.log("sgfdasg");
         var belowIndex = (row + 1) * N + col;
         var belowField = gameCanvas.children().eq(belowIndex);
-        switch (true) {
-            case belowField.hasClass('emptyField'):
-                belowField.removeClass('emptyField');
-                belowField.addClass('fullField');
-                break;
-            case belowField.hasClass('fullField'):
-                belowField.removeClass('fullField');
-                belowField.addClass('emptyField');
-                break;
+        if (belowField.hasClass('emptyField')) {
+            belowField.removeClass('emptyField');
+            belowField.addClass('fullField');
+        } else {
+            belowField.removeClass('fullField');
+            belowField.addClass('emptyField');
         }
     }
 
@@ -200,15 +211,12 @@ function clickOnField () {
     if (col > 0) {
         var leftIndex = row * N + (col - 1);
         var leftField = gameCanvas.children().eq(leftIndex);
-        switch (true) {
-            case leftField.hasClass('emptyField'):
-                leftField.removeClass('emptyField');
-                leftField.addClass('fullField');
-                break;
-            case leftField.hasClass('fullField'):
-                leftField.removeClass('fullField');
-                leftField.addClass('emptyField');
-                break;
+        if (leftField.hasClass('emptyField')) {
+            leftField.removeClass('emptyField');
+            leftField.addClass('fullField');
+        } else {
+            leftField.removeClass('fullField');
+            leftField.addClass('emptyField');
         }
     }
 
@@ -216,77 +224,74 @@ function clickOnField () {
     if (col < N - 1) {
         var rightIndex = row * N + (col + 1);
         var rightField = gameCanvas.children().eq(rightIndex);
-        switch (true) {
-            case rightField.hasClass('emptyField'):
-                rightField.removeClass('emptyField');
-                rightField.addClass('fullField');
-                break;
-            case rightField.hasClass('fullField'):
-                rightField.removeClass('fullField');
-                rightField.addClass('emptyField');
-                break;
+        if (rightField.hasClass('emptyField')) {
+            rightField.removeClass('emptyField');
+            rightField.addClass('fullField');
+        } else {
+            rightField.removeClass('fullField');
+            rightField.addClass('emptyField');
         }
     }
-    switch (true) {
-        case clickedField.hasClass('emptyField'):
-            clickedField.removeClass('emptyField');
-            clickedField.addClass('fullField');
-            break;
-        case clickedField.hasClass('fullField'):
-            clickedField.removeClass('fullField');
-            clickedField.addClass('emptyField');
-            break;
+
+    // Kattintott mező cseréje
+    if (clickedField.hasClass('emptyField')) {
+        clickedField.removeClass('emptyField');
+        clickedField.addClass('fullField');
+    } else {
+        clickedField.removeClass('fullField');
+        clickedField.addClass('emptyField');
     }
-    stepCounter();
-    scoreCounter();
-    gameCanvas.children('.fullField').each(function () {
-        console.log(allEmpty);
+
+    gameCanvas.children('.fullField').each(function() {
         if ($(this).hasClass('fullField')) {
             allEmpty = false;
-            return false; // Kilépünk a ciklusból, ha találunk egy fullField mezőt
+            return false;
         }
     });
 
     if (allEmpty) {
         mainScore += score;
-        alert("Nyertél! A pontszámod: " + score + ", "+ steps + " lépésből oldottad meg a pályát");
+        alert(
+            'Nyertél! A pontszámod: ' +
+            score +
+            ', ' +
+            steps +
+            ' lépésből oldottad meg a pályát'
+        );
         level++;
         if (level === 5) {
-            alert("Végigvitted a játékot");
-            window.location.href = 'toplist.html';
+            alert('Végigvitted a játékot');
+            topList.push({name: playername, points: mainScore});
+            gameCanvas.off('click');
+            for (let i = 0; i<topList.length; i++) {
+                console.log(topList[i].name + " " + topList[i].points);
+            }
         } else {
-            startGame();
+            drawLevel();
         }
     }
-    allEmpty = true;
 }
 
-function timer (time) {
-    clearInterval(countdown);
+function timer () {
+    clearInterval(countUp);
     let timerDisplay = $('#timerDisplay');
 
-    countdown = setInterval(function() {
-
-        if (time === 0) {
-            timeExpired = true;
-            timerDisplay.text('Lejárt az idő! A játék véget ért.');
-            setTimeout(function () {
-            window.location.href = 'toplist.html';
-            },3000);
-        } else {
-            timerDisplay.fadeOut(250, function() {
-                timerDisplay.text("Hátralévő idő: " + time);
-                timerDisplay.fadeIn(250);
+    countUp = setInterval(function() {
+            timerDisplay.fadeOut(500, function() {
+                timerDisplay.text("Eltelt idő: " + time);
+                timerDisplay.fadeIn(500);
             });
-            time--;
-        }
+            time++;
+
     }, 1000);
 }
 
 function stepCounter () {
+
     let stepCounterDisplay = $('#stepCounter');
     steps++;
     stepCounterDisplay.text("Lépések száma: " + steps);
+    scoreCounter();
 }
 
 function scoreCounter () {
