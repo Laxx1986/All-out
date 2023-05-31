@@ -8,7 +8,6 @@
     left: 20%;
     margin-left: -250px;
     margin-top: -250px;
-
 }
 
 #extraCanvas {
@@ -18,11 +17,11 @@
     border: solid black 1px;
     background: black;
     top: 50%;
-    left: 80%;
+    left: 75%;
     margin-left: -250px;
     margin-top: -250px;
-
 }
+
 
 .h1class {
     position: relative;
@@ -31,11 +30,6 @@
 }
 
 .mainpagebutton {
-    top: 50%;
-    left: 50%;
-    margin-left: 25%;
-}
-#toplistButton {
     top: 50%;
     left: 50%;
     margin-left: 25%;
@@ -60,8 +54,22 @@
     left: 10px;
     color: red;
     font-size: 20px;
-    fontSize: 24px;
-    fontWeight: bold;
+    background: gray;
+}
+#text {
+    position: absolute;
+    top: 200px;
+    left: 10px;
+    color: red;
+    font-size: 20px;
+    background: gray;
+}
+#mainScoreCounter {
+    position: absolute;
+    top: 140px;
+    left: 10px;
+    color: red;
+    font-size: 20px;
     background: gray;
 }
 
@@ -71,8 +79,6 @@
     left: 10px;
     color: red;
     font-size: 20px;
-    fontSize: 24px;
-    fontWeight: bold;
     background: gray;
 }
 
@@ -82,20 +88,19 @@
     left: 10px;
     color: red;
     font-size: 20px;
-    fontSize: 24px;
-    fontWeight: bold;
     background: gray;
 }
 
-#mainScoreCounter {
-    position: absolute;
-    top: 140px;
-    left: 10px;
+#toplistContainer {
+    margin-left: 10px;
+    margin-top: 30%;
+    padding: 10px;
+}
+
+.tableFormat {
+    margin-left: 5px;
+    border: 1px solid white;
     color: red;
-    font-size: 20px;
-    fontSize: 24px;
-    fontWeight: bold;
-    background: gray;
+    padding: 10px;
+    margin-top: 20px;
 }
-
-

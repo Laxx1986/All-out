@@ -4,25 +4,24 @@ let level = 1;
 let score = 0;
 let allEmpty=true;
 let steps = 0;
-let time = 0;
 let mainScore = 0;
 let countUp;
 let playername;
 let gameCanvas;
+let extraCanvas;
 let topList = [];
 let audio;
 let clickedField;
 let index;
 let row;
 let col;
-
+let time;
+let levelStart;
 $(function () {
     gameCanvas = $('<div></div>');
     gameCanvas.appendTo('body');
-
     gameCanvas.attr('id', 'gameCanvas');
-    gameCanvas.on('click', '.emptyField', clickOnField);
-    gameCanvas.on('click', '.fullField', clickOnField);
+
 });
 
 $(function () {
@@ -32,38 +31,35 @@ $(function () {
 
 });
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
     let toplistContainer = document.createElement('div');
     toplistContainer.setAttribute('id', 'toplistContainer');
     document.body.appendChild(toplistContainer);
 });
 
-function openTopList() {
+function topListTable() {
     topList.sort(function(a, b) {
         return b.points - a.points;
     });
-    let tableContent = '<table><tr><th>Név</th><th>Pontszám</th></tr>';
+    let tableContent = '<table class="tableFormat"><tr><th>Név</th><th>Pontszám</th></tr>';
+    if (topList.length >0) {
     for (let i = 0; i < topList.length; i++) {
-        tableContent += '<tr><td>' + topList[i].name + '</td><td>' + topList[i].points + '</td></tr>';
+        tableContent += '<tr class="tableFormat"><td class="tableFormat">' + topList[i].name + '</td><td>' + topList[i].points + '</td></tr>';
     }
     tableContent += '</table>';
-    document.getElementById('toplistContainer').innerHTML = tableContent;
-    window.location.href = 'toplist.html';
+    document.getElementById('toplistContainer').innerHTML = tableContent;}
 }
-
-$(function () {
-    $('#toplistButton').click(openTopList);
-});
 
 function openRules() {
     window.location.href = 'rules.html';
 }
 
 function newGame() {
-    topList.push({name: playername, points: mainScore});
-    for (let i = 0; i<topList.length; i++) {
-        console.log(topList[i].name + " " + topList[i].points);
-    }
+    gameCanvas.off('click');
+    gameCanvas.on('click', '.emptyField', clickOnField);
+    gameCanvas.on('click', '.fullField', clickOnField);
     playername = prompt('Add meg a neved: ');
     level = 1;
     levelStart = true;
@@ -71,18 +67,24 @@ function newGame() {
     steps=-1;
     mainScore = 0;
     drawLevel();
-    timer();
 }
 
 function drawLevel() {
+
     alert("A(z) " + level + " palya elindult");
     gameCanvas.empty();
+    extraCanvas.empty();
     steps = -1;
     score = 0;
+    let text = $('<div><p>Statisztika</p></div>');
+    text.attr('id', 'text');
+    text.appendTo(extraCanvas);
+    animation();
     let timerDisplay = $('<div></div>');
     timerDisplay.attr('id', 'timerDisplay');
     timerDisplay.appendTo(extraCanvas);
-
+    time = 0;
+    timer();
     let stepC = $('<div></div>');
     stepC.attr('id', 'stepCounter');
     stepC.appendTo(extraCanvas);
@@ -162,6 +164,19 @@ function drawLevel() {
     allEmpty = true;
     stepCounter();
     scoreCounter();
+}
+
+function animation() {
+    let angle = 0;
+    let rotationSpeed = 0.3;
+
+    function rotate() {
+        angle += rotationSpeed;
+        $('#text').css('transform', 'rotate(' + angle + 'deg)');
+        requestAnimationFrame(rotate);
+    }
+
+    rotate();
 }
 
 function clickOnField() {
@@ -262,6 +277,7 @@ function clickOnField() {
         if (level === 5) {
             alert('Végigvitted a játékot');
             topList.push({name: playername, points: mainScore});
+            topListTable();
             gameCanvas.off('click');
             for (let i = 0; i<topList.length; i++) {
                 console.log(topList[i].name + " " + topList[i].points);
@@ -301,18 +317,21 @@ function scoreCounter () {
     mainScoreDisplay.text("Összes pontjaid: "+ mainScore);
     switch (level) {
         case 1: {
-            score = 1000 / steps * level;
+            if (steps > 0)
+                score = 1000 / steps * level;
             break; }
         case 2: {
-            score = 10000 / steps * level;
+            if (steps > 0)
+                score = 10000 / steps * level;
             break; }
         case 3: {
-            score = 100000 / steps * level;
+            if (steps > 0)
+                score = 100000 / steps * level;
             break; }
         case 4: {
-            score = 1000000 / steps * level;
+            if (steps > 0)
+                score = 1000000 / steps * level;
             break; }
     }
 }
-//TODO toplista névbeírással
 
